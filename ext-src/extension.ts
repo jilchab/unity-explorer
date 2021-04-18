@@ -6,6 +6,10 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.commands.registerCommand("unity-explorer.explore", () => {
 		ReactPanel.createOrShow(context.extensionPath);
 	}));
+
+	context.subscriptions.push(vscode.commands.registerCommand("unity-explorer.send", () => {
+		ReactPanel.SendTestText();
+	}));
 }
 
 /**
@@ -24,8 +28,8 @@ class ReactPanel {
 	private _disposables: vscode.Disposable[] = [];
 
 	public static createOrShow(extensionPath: string) {
-		const column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : undefined;
-
+		//const column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : undefined;
+		const column = vscode.ViewColumn.Three;
 		// If we already have a panel, show it.
 		// Otherwise, create a new panel.
 		if (ReactPanel.currentPanel) {
@@ -60,16 +64,16 @@ class ReactPanel {
 		this._panel.webview.onDidReceiveMessage(message => {
 			switch (message.command) {
 				case 'alert':
-					vscode.window.showErrorMessage(message.text);
+					vscode.window.showErrorMessage(message.payload as string);
 					return;
 			}
 		}, null, this._disposables);
 	}
 
-	public doRefactor() {
-		// Send a message to the webview webview.
-		// You can send any JSON serializable data.
-		this._panel.webview.postMessage({ command: 'refactor' });
+	static SendTestText() {
+		if (ReactPanel.currentPanel && ReactPanel.currentPanel._panel) {
+			ReactPanel.currentPanel._panel.webview.postMessage({ text: 'Test text' });
+		}
 	}
 
 	public dispose() {
