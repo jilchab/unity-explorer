@@ -5,7 +5,7 @@ import UnityExplorer from './unity-explorer/UnityExplorer'
 class App extends React.Component {
   public render() {
     return (
-      <div style={{margin:"10px"}}>
+      <div>
         <UnityExplorer/>
       </div>
     );
